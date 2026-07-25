@@ -1,83 +1,372 @@
-# Eventora - Full-Stack Event Booking Platform
+# 🎉 Eventora - Full-Stack MERN Event Booking Platform
 
-Eventora is a full-stack MERN application that allows users to seamlessly browse, register, and pay natively without any third party tools. It features an administrative dashboard for event organizers to create and manage free and paid events. All bookings can be managed manually by an admin to handle payments directly.
-
-## Features
-- **User Authentication**: Secure login & registration with JWT and bcrypt.
-- **2FA OTP Verification**: 
-  - Mandatory Email OTP to activate your account upon Registration (or delayed login attempts).
-  - Mandatory Email OTP to finalize and secure event ticket booking.
-- **Role-Based Access**: 
-  - **Admin**: Create, edit, and delete events. Confirm and reject all incoming booking requests, mark them as 'Paid' or 'Not Paid'. Access is strictly locked to database-flagged users only.
-  - **User**: Browse events, submit ticket booking requests via OTP, view personal dashboard pending status, and cancel bookings.
-- **Event Management**: Create free and paid events with detailed descriptions, external image URLs, dates, categories, and seating capacity.
-- **Smart Booking System**:
-  - Mandatory 2FA OTP to authorize a booking request.
-  - All booking requests (both free and paid) enter a secure 'Pending' queue for Admin verification.
-  - Seat availability accurately updates and securely validates against overbooking logic.
-- **Admin Analytics Dashboard**: Track live data such as Pending Requests, Total Revenue, and Total Confirmed Paid Clients directly from the admin panel.
-- **Email Notifications**: Automated email delivery upon successful booking confirmation using Nodemailer.
-- **Sleek UI/UX**: Built entirely with React, Tailwind CSS, and polished with micro-interactions.
+> A modern full-stack Event Booking & Management platform built using the MERN Stack with secure authentication, OTP verification, role-based access, and a powerful Admin Dashboard.
 
 ---
 
-## 🚀 Setup Instructions
+# 🌐 Live Demo
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
-You will also need a MongoDB database (e.g., [MongoDB Atlas Free Tier](https://www.mongodb.com/cloud/atlas/register)).
+### 🔗 Live Application
+**https://eventora-mern-six.vercel.app**
 
-### 1. Environment Variables Configuration
-Navigate to `server/.env` and fill in the necessary keys:
+---
+
+# 👨‍💼 Admin Demo Credentials
+
+Use these credentials to explore the Admin Dashboard.
+
+**Email:** `golu78dk@gmail.com`
+
+**Password:** `password123`
+
+➡️ After login, admin will automatically access the Admin Dashboard.
+
+---
+
+# 👤 User Demo Credentials
+
+**Email:** `user@eventora.com`
+
+**Password:** `password123`
+
+---
+
+# 📌 Project Overview
+
+Eventora is a full-stack MERN Event Booking Platform where users can browse events, register securely using Email OTP verification, and book tickets for both free and paid events.
+
+Administrators can manage events, verify bookings, monitor revenue, approve or reject booking requests, and view platform analytics from a dedicated dashboard.
+
+---
+
+# ✨ Features
+
+## 🔐 Authentication & Security
+
+- JWT Authentication
+- Password Encryption using bcrypt
+- Email OTP Verification
+- Protected Routes
+- Role-Based Authorization
+- Secure Session Management
+
+---
+
+## 👤 User Features
+
+- User Registration
+- Login System
+- Email OTP Verification
+- Browse Events
+- Search Events
+- Filter by Category
+- Book Free Events
+- Book Paid Events
+- Booking History
+- Cancel Booking
+- User Dashboard
+
+---
+
+## 👨‍💼 Admin Features
+
+- Secure Admin Login
+- Admin Dashboard
+- Create Events
+- Update Events
+- Delete Events
+- Manage Users
+- View Bookings
+- Approve Booking Requests
+- Reject Booking Requests
+- Mark Payment Status
+- Revenue Analytics
+- Booking Statistics
+- Event Statistics
+
+---
+
+## 🎫 Smart Booking System
+
+- OTP Verification before Booking
+- Pending Approval Workflow
+- Seat Availability Validation
+- Overbooking Protection
+- Booking Confirmation
+- Email Notifications
+
+---
+
+## 📊 Admin Dashboard Analytics
+
+- Total Users
+- Total Events
+- Total Bookings
+- Pending Requests
+- Confirmed Bookings
+- Paid Revenue
+- Booking Status Analytics
+
+---
+
+## 📧 Email Services
+
+- Registration OTP
+- Booking OTP
+- Booking Confirmation
+- Nodemailer Integration
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React.js
+- React Router DOM
+- Axios
+- Tailwind CSS
+- Vite
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT
+- bcryptjs
+- Nodemailer
+
+---
+
+# 📂 Project Structure
+
+```
+Eventora-MERN
+│
+├── client
+│   ├── src
+│   ├── public
+│   └── package.json
+│
+├── server
+│   ├── controllers
+│   ├── middleware
+│   ├── models
+│   ├── routes
+│   ├── utils
+│   ├── seed.js
+│   └── package.json
+│
+└── README.md
+```
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env` file inside the **server** folder.
+
 ```env
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=supersecretjwtkey_eventora
-EMAIL_USER=your_gmail_address
-EMAIL_PASS=your_gmail_app_password
+
+JWT_SECRET=your_secret_key
+
+EMAIL_USER=your_gmail@gmail.com
+
+EMAIL_PASS=your_google_app_password
+
 PORT=5000
 ```
-> **Note**: For `EMAIL_PASS`, you need to generate an "App Password" from your Google Account settings, standard passwords won't work due to 2FA.
 
-### 2. Run from Outer Folder (Single Terminal)
-You can now manage both backend and frontend from the project root:
+Create a `.env` file inside the **client** folder.
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+For Production (Vercel)
+
+```env
+VITE_API_URL=https://eventora-mern-26rr.onrender.com/api
+```
+
+---
+
+# 🚀 Installation
+
+## Clone Repository
 
 ```bash
-# from Eventora root
+git clone https://github.com/ChaurasiyaDharmendra/Eventora-MERN.git
+```
+
+```
+cd Eventora-MERN
+```
+
+---
+
+## Install Dependencies
+
+```bash
 npm install
+
 npm run install:all
+```
+
+---
+
+## Run Application
+
+### Single Command
+
+```bash
 npm run dev
 ```
 
-- `npm run dev` starts both `server` and `client` together using `concurrently`.
-- `npm run dev:all` installs dependencies (server + client) and starts both in one command.
-- `npm run start` runs backend `start` + frontend `preview` together.
+---
 
-### 3. Install Dependencies
-Open two separate terminals for the backend and frontend.
+### Backend
 
-**Backend Terminal:**
 ```bash
 cd server
-npm install --legacy-peer-deps
-```
 
-**Frontend Terminal:**
-```bash
-cd client
 npm install
-```
 
-### 4. Run the Application Local Servers
-**Run Backend:**
-```bash
-cd server
 npm run dev
 ```
-*(Server will run on `http://localhost:5000`)*
 
-**Run Frontend:**
+---
+
+### Frontend
+
 ```bash
 cd client
+
+npm install
+
 npm run dev
 ```
-*(Client will run on a local port provided by Vite, typically `http://localhost:5173`)*
+
+---
+
+# 🌱 Seed Demo Data
+
+```bash
+cd server
+
+node seed.js
+```
+
+This creates:
+
+- Admin Account
+- Demo User
+- Sample Events
+- Demo Bookings
+
+---
+
+# 🔐 Demo Credentials
+
+## Admin
+
+Email
+
+```
+golu78dk@gmail.com
+```
+
+Password
+
+```
+password123
+```
+
+---
+
+## User
+
+Email
+
+```
+user@eventora.com
+```
+
+Password
+
+```
+password123
+```
+
+---
+
+# 📸 Key Modules
+
+- Authentication
+- OTP Verification
+- Event Management
+- Booking Management
+- Admin Dashboard
+- Revenue Tracking
+- User Dashboard
+- Email Notifications
+
+---
+
+# 💼 Resume Highlights
+
+✔ Full-Stack MERN Project
+
+✔ JWT Authentication
+
+✔ Email OTP Verification
+
+✔ Role-Based Authorization
+
+✔ Admin Dashboard
+
+✔ Booking Management System
+
+✔ MongoDB Atlas Integration
+
+✔ Responsive UI
+
+✔ REST API
+
+✔ Production Deployment
+
+---
+
+# 🌍 Deployment
+
+Frontend
+
+**Vercel**
+
+Backend
+
+**Render**
+
+Database
+
+**MongoDB Atlas**
+
+---
+
+# 👨‍💻 Developer
+
+**Dharmendra Chaurasiya**
+
+B.Tech Information Technology
+
+Full Stack MERN Developer
+
+GitHub:
+https://github.com/ChaurasiyaDharmendra
+
+---
+
+## ⭐ If you like this project, don't forget to give it a Star ⭐
