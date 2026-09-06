@@ -15,7 +15,7 @@
 
 Use these credentials to explore the Admin Dashboard.
 
-**Email:** `golu78dk@gmail.com`
+**Email:** `admin@eventora.com`
 
 **Password:** `password123`
 

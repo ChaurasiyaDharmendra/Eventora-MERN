@@ -11,7 +11,7 @@ const dns = require("dns");
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const users = [
-    { name: 'Admin User', email: 'golu78dk@gmail.com', password: 'password123', role: 'admin' },
+    { name: 'Admin User', email: 'admin@eventora.com', password: 'password123', role: 'admin' },
     { name: 'Demo User', email: 'user@eventora.com', password: 'password123', role: 'user' },
     { name: 'Alice Smith', email: 'alice@eventora.com', password: 'password123', role: 'user' },
     { name: 'Bob Johnson', email: 'bob@eventora.com', password: 'password123', role: 'user' },
