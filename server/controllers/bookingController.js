@@ -128,15 +128,26 @@
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
 const OTP = require('../models/OTP');
-const { sendBookingEmail, sendOTPEmail } = require('../utils/email');
+
+const {
+    sendBookingEmail,
+    sendOTPEmail
+} = require('../utils/email');
 
 const generateOTP = () =>
     Math.floor(100000 + Math.random() * 900000).toString();
 
 const generateTicketId = () => {
-    return 'EVT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const random = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+
+    return `EVT-${random}`;
 };
 
+
+// Send OTP for booking
 exports.sendBookingOTP = async (req, res) => {
     try {
         const otp = generateOTP();
@@ -170,10 +181,13 @@ exports.sendBookingOTP = async (req, res) => {
     }
 };
 
+
+// Create booking request
 exports.bookEvent = async (req, res) => {
     try {
         const { eventId, otp } = req.body;
 
+        // Verify OTP
         const validOTP = await OTP.findOne({
             email: req.user.email,
             otp,
@@ -186,6 +200,7 @@ exports.bookEvent = async (req, res) => {
             });
         }
 
+        // Find event
         const event = await Event.findById(eventId);
 
         if (!event) {
@@ -194,31 +209,42 @@ exports.bookEvent = async (req, res) => {
             });
         }
 
+        // Check seats
         if (event.availableSeats <= 0) {
             return res.status(400).json({
                 message: 'No seats available'
             });
         }
 
+        // Check existing booking
         const existingBooking = await Booking.findOne({
             userId: req.user.id,
             eventId
         });
 
-        if (existingBooking && existingBooking.status !== 'cancelled') {
+        if (
+            existingBooking &&
+            existingBooking.status !== 'cancelled'
+        ) {
             return res.status(400).json({
                 message: 'Already booked or pending'
             });
         }
 
+        // Generate Ticket ID
+        const ticketId = generateTicketId();
+
+        // Create booking
         const booking = await Booking.create({
             userId: req.user.id,
             eventId,
             status: 'pending',
             paymentStatus: 'not_paid',
-            amount: event.ticketPrice
+            amount: event.ticketPrice,
+            ticketId
         });
 
+        // Delete OTP after successful booking
         await OTP.deleteOne({
             _id: validOTP._id
         });
@@ -236,6 +262,8 @@ exports.bookEvent = async (req, res) => {
     }
 };
 
+
+// Admin confirms booking
 exports.confirmBooking = async (req, res) => {
     try {
         const { paymentStatus } = req.body;
@@ -256,7 +284,9 @@ exports.confirmBooking = async (req, res) => {
             });
         }
 
-        const event = await Event.findById(booking.eventId._id);
+        const event = await Event.findById(
+            booking.eventId._id
+        );
 
         if (!event) {
             return res.status(404).json({
@@ -270,25 +300,25 @@ exports.confirmBooking = async (req, res) => {
             });
         }
 
+        // Generate ticket ID if old booking does not have one
+        if (!booking.ticketId) {
+            booking.ticketId = generateTicketId();
+        }
+
         booking.status = 'confirmed';
 
         if (paymentStatus) {
             booking.paymentStatus = paymentStatus;
         }
 
-        // Generate Ticket ID when booking is confirmed
-        if (!booking.ticketId) {
-            booking.ticketId = generateTicketId();
-        }
-
-        booking.entryUsed = false;
-
         await booking.save();
 
+        // Reduce available seat
         event.availableSeats -= 1;
+
         await event.save();
 
-        // Send confirmation email
+        // Send confirmation email with Ticket ID
         await sendBookingEmail(
             booking.userId.email,
             booking.userId.name,
@@ -309,18 +339,21 @@ exports.confirmBooking = async (req, res) => {
     }
 };
 
+
+// Get bookings
 exports.getMyBookings = async (req, res) => {
     try {
-        const bookings = req.user.role === 'admin'
-            ? await Booking.find()
-                .populate('eventId')
-                .populate('userId', 'name email')
-                .sort({ createdAt: -1 })
-            : await Booking.find({
-                userId: req.user.id
-            })
-                .populate('eventId')
-                .sort({ createdAt: -1 });
+        const bookings =
+            req.user.role === 'admin'
+                ? await Booking.find()
+                    .populate('eventId')
+                    .populate('userId', 'name email')
+                    .sort({ createdAt: -1 })
+                : await Booking.find({
+                    userId: req.user.id
+                })
+                    .populate('eventId')
+                    .sort({ createdAt: -1 });
 
         res.json(bookings);
 
@@ -332,9 +365,13 @@ exports.getMyBookings = async (req, res) => {
     }
 };
 
+
+// Cancel booking
 exports.cancelBooking = async (req, res) => {
     try {
-        const booking = await Booking.findById(req.params.id);
+        const booking = await Booking.findById(
+            req.params.id
+        );
 
         if (!booking) {
             return res.status(404).json({
@@ -357,14 +394,18 @@ exports.cancelBooking = async (req, res) => {
             });
         }
 
-        const wasConfirmed = booking.status === 'confirmed';
+        const wasConfirmed =
+            booking.status === 'confirmed';
 
         booking.status = 'cancelled';
 
         await booking.save();
 
+        // Restore seat only if booking was confirmed
         if (wasConfirmed) {
-            const event = await Event.findById(booking.eventId);
+            const event = await Event.findById(
+                booking.eventId
+            );
 
             if (event) {
                 event.availableSeats += 1;
