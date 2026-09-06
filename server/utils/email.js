@@ -91,17 +91,64 @@ dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendBookingEmail = async (userEmail, userName, eventTitle) => {
+const sendBookingEmail = async (
+    userEmail,
+    userName,
+    eventTitle,
+    ticketId
+) => {
     try {
         const { data, error } = await resend.emails.send({
             from: 'Eventora <onboarding@resend.dev>',
             to: userEmail,
             subject: `Booking Confirmed: ${eventTitle}`,
+
             html: `
-                <h2>Hi ${userName}!</h2>
-                <p>Your booking for the event 
-                <strong>${eventTitle}</strong> is successfully confirmed.</p>
-                <p>Thank you for choosing Eventora.</p>
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+
+                    <h2>Hi ${userName}!</h2>
+
+                    <p>
+                        Your booking for the event
+                        <strong>${eventTitle}</strong>
+                        is successfully confirmed.
+                    </p>
+
+                    <div style="
+                        margin: 25px 0;
+                        padding: 20px;
+                        background: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                    ">
+                        <h3>🎟️ Your Ticket ID</h3>
+
+                        <p style="
+                            font-size: 24px;
+                            font-weight: bold;
+                            letter-spacing: 3px;
+                        ">
+                            ${ticketId}
+                        </p>
+
+                        <p style="color: #555;">
+                            Please show this Ticket ID at the event entrance.
+                        </p>
+                    </div>
+
+                    <p>
+                        <strong>Event:</strong> ${eventTitle}
+                    </p>
+
+                    <p>
+                        <strong>Ticket ID:</strong> ${ticketId}
+                    </p>
+
+                    <p style="color: #555;">
+                        Thank you for choosing Eventora.
+                    </p>
+
+                </div>
             `
         });
 
@@ -110,13 +157,24 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
             return;
         }
 
-        console.log('Booking email sent successfully:', data.id);
+        console.log(
+            'Booking email sent successfully:',
+            data.id
+        );
+
     } catch (error) {
-        console.error('Error sending booking email:', error);
+        console.error(
+            'Error sending booking email:',
+            error
+        );
     }
 };
 
-const sendOTPEmail = async (userEmail, otp, type) => {
+const sendOTPEmail = async (
+    userEmail,
+    otp,
+    type
+) => {
     try {
         const title =
             type === 'account_verification'
@@ -132,11 +190,20 @@ const sendOTPEmail = async (userEmail, otp, type) => {
             from: 'Eventora <onboarding@resend.dev>',
             to: userEmail,
             subject: title,
+
             html: `
-                <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+                <div style="
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    padding: 20px;
+                ">
+
                     <h2>${title}</h2>
 
-                    <p style="color: #555; font-size: 16px;">
+                    <p style="
+                        color: #555;
+                        font-size: 16px;
+                    ">
                         ${msg}
                     </p>
 
@@ -152,10 +219,14 @@ const sendOTPEmail = async (userEmail, otp, type) => {
                         ${otp}
                     </div>
 
-                    <p style="color: #999; font-size: 12px;">
+                    <p style="
+                        color: #999;
+                        font-size: 12px;
+                    ">
                         This code expires in 5 minutes.
                         If you didn't request this, please ignore this email.
                     </p>
+
                 </div>
             `
         });
@@ -165,9 +236,16 @@ const sendOTPEmail = async (userEmail, otp, type) => {
             return;
         }
 
-        console.log(`OTP sent successfully to ${userEmail}:`, data.id);
+        console.log(
+            `OTP sent successfully to ${userEmail}:`,
+            data.id
+        );
+
     } catch (error) {
-        console.error('Error sending OTP email:', error);
+        console.error(
+            'Error sending OTP email:',
+            error
+        );
     }
 };
 
